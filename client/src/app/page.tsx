@@ -1,7 +1,10 @@
 'use client';
 
-import Card from '@/components/card.component';
 import { useEffect, useState } from 'react';
+
+import Card from '@/components/card.component';
+import AddIcon from '../assets/add.svg';
+import Button from '@/components/button.component';
 
 export type Task = {
   id: number;
@@ -23,16 +26,14 @@ export default function Home() {
 
   return (
     <>
-      <header className='container mx-auto flex h-20 justify-between border-b-white/10 p-4'>
+      <header className='container mx-auto mb-6 flex h-20 justify-between border-b-white/10 px-4 py-8'>
         <p className='text-4xl font-bold text-white'>कार्यList</p>
-        <button className='h-fit rounded-[4px] border-2 border-white/60 bg-white/90 px-4 py-1 text-zinc-950'>
-          Login
-        </button>
+        <Button value='Login' type='rect' />
       </header>
       <main className='container mx-auto mb-auto p-4'>
         <div className='flex justify-between'>
           <h2 className='mb-4 text-2xl font-bold'>Tasks</h2>
-          <button className='p-4'>Add Task </button>
+          <Button value='Add Task' type='rect' icon={<AddIcon />} />
         </div>
         <div className='flex flex-wrap gap-4'>
           {tasks &&
@@ -46,7 +47,7 @@ export default function Home() {
             ))}
         </div>
       </main>
-      <footer className='p-4 text-center'>Made by zelfroster</footer>
+      <footer className='p-4 text-center'>Made with &lt;3 by zelfroster</footer>
     </>
   );
 }
