@@ -3,8 +3,12 @@
 import { useEffect, useState } from 'react';
 
 import Card from '@/components/card.component';
-import AddIcon from '../assets/add.svg';
 import Button from '@/components/button.component';
+
+import AddIcon from '../assets/add.svg';
+import { createPortal } from 'react-dom';
+import Modal from '@/components/modal.component';
+import Form from '@/components/form.component';
 
 export type Task = {
   id: number;
@@ -14,6 +18,7 @@ export type Task = {
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     async function getAllTasks() {
@@ -24,16 +29,39 @@ export default function Home() {
     getAllTasks();
   }, []);
 
+  function openModal() {
+    setIsEditModalOpen(true);
+  }
+
+  function closeModal() {
+    setIsEditModalOpen(false);
+  }
+
   return (
     <>
-      <header className='container mx-auto mb-6 flex h-20 justify-between border-b-white/10 px-4 py-8'>
+      <header className='container mx-auto mb-6 flex h-20 justify-between border-b border-b-neutral-900 px-4 pb-16 pt-8'>
         <p className='text-4xl font-bold text-white'>कार्यList</p>
-        <Button value='Login' type='rect' />
+        <Button value='Login' />
       </header>
       <main className='container mx-auto mb-auto p-4'>
         <div className='flex justify-between'>
           <h2 className='mb-4 text-2xl font-bold'>Tasks</h2>
-          <Button value='Add Task' type='rect' icon={<AddIcon />} />
+          <Button
+            value='Add Task'
+            icon={<AddIcon />}
+            onClickHandler={openModal}
+          />
+          {isEditModalOpen &&
+            createPortal(
+              <Modal closeModal={closeModal}>
+                <Form
+                  tasks={tasks}
+                  setTasks={setTasks}
+                  closeModal={closeModal}
+                />
+              </Modal>,
+              document.body,
+            )}
         </div>
         <div className='flex flex-wrap gap-4'>
           {tasks &&

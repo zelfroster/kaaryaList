@@ -1,13 +1,12 @@
 import Button from './button.component';
 import CrossIcon from '../assets/cross.svg';
 
-export default function Modal({
-  toggleModal,
-  children,
-}: {
-  toggleModal: () => void;
+type ModalPropTypes = {
+  closeModal: () => void;
   children: React.ReactNode;
-}) {
+};
+
+export default function Modal({ closeModal, children }: ModalPropTypes) {
   return (
     <div className='absolute min-h-screen w-full bg-black/40 backdrop-blur-[2px]'>
       <div className='absolute inset-0 m-auto flex h-fit w-max flex-col'>
@@ -16,7 +15,7 @@ export default function Modal({
           <Button
             type='round'
             icon={<CrossIcon />}
-            onClickHandler={toggleModal}
+            onClickHandler={closeModal}
           />
         </div>
       </div>

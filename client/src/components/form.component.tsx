@@ -1,49 +1,70 @@
 import { Task } from '@/app/page';
 import Button from './button.component';
-import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useState,
+} from 'react';
 
-export default function Form({
-  task,
-  tasks,
-  setTasks,
-}: {
-  task: Task;
+type FormPropTypes = {
+  taskId?: number;
+  task?: Task;
   tasks: Task[];
   setTasks: Dispatch<SetStateAction<Task[]>>;
-}) {
-  const [taskName, setTaskName] = useState(task.name);
+  closeModal: () => void;
+};
+
+export default function Form(formProps: FormPropTypes) {
+  const { taskId, task, tasks, setTasks, closeModal } = formProps;
+  const [curTaskName, setCurTaskName] = useState(task?.name || '');
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    setTaskName(event.target.value);
+    setCurTaskName(event.target.value);
   }
 
-  function updateTask(task: Task) {
-    const updatedTask = fetch(`http://localhost:9000/updateTask/${task.id}`, {
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+
+    taskId ? updateTask() : createTask();
+    closeModal();
+  }
+
+  function createTask() {
+    const taskToCreate = { name: curTaskName };
+    fetch(`http://localhost:9000/createTask`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(taskToCreate),
+    })
+      .then((res) => res.json())
+      .then((newTask) => {
+        setTasks(() => [...tasks, newTask]);
+      });
+  }
+
+  function updateTask() {
+    const taskToUpdate = { name: curTaskName, isComplete: task?.isComplete };
+    fetch(`http://localhost:9000/updateTask/${task?.id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
       },
-      body: JSON.stringify(task),
-    }).then((res) => res.json());
-    return updatedTask;
-  }
-
-  function handleSubmit(event: any) {
-    event.preventDefault();
-
-    const taskToUpdate = { ...task, ['name']: taskName };
-    updateTask(taskToUpdate).then((newTask) => {
-      setTasks(() => {
-        const newTasks: Task[] = [];
-        tasks.forEach((curTask) =>
-          curTask.id === task.id
-            ? newTasks.push(newTask)
-            : newTasks.push(curTask),
+      body: JSON.stringify(taskToUpdate),
+    })
+      .then((res) => res.json())
+      .then((updatedTask) => {
+        setTasks(() =>
+          tasks.map((task) => {
+            return taskId === task.id ? updatedTask : task;
+          }),
         );
-        return newTasks;
       });
-    });
   }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -55,11 +76,14 @@ export default function Form({
       <input
         type='text'
         id='taskName'
-        value={taskName}
+        value={curTaskName}
         className='rounded border border-white/60 bg-black/20 px-2 py-1 outline-none focus:border-white'
         onChange={handleChange}
       />
-      <Button value='Confirm Edit' extraClassProps='justify-center' />
+      <Button
+        value={taskId ? 'Confirm Edit' : 'Create Task'}
+        extraClassProps='justify-center'
+      />
     </form>
   );
 }

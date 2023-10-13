@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import './globals.css';
 import type { Metadata } from 'next';
 
@@ -13,8 +14,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className='scroll-smooth'>
-      <body className='flex min-h-screen w-full flex-col bg-black text-zinc-300'>
+      <head>
+        <Script
+          src='https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js'
+          strategy='beforeInteractive'
+          defer
+        />
+        <Script
+          dangerouslySetInnerHTML={{
+            __html: `
+          particlesJS.load("particles-js", "/particles.json")
+        `,
+          }}
+          strategy='afterInteractive'
+          defer
+        />
+      </head>
+      <body className='relative flex min-h-screen w-full flex-col bg-black text-zinc-300'>
         {children}
+        <div id='particles-js' className='fixed inset-0 -z-10'></div>
       </body>
     </html>
   );
