@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import Card from '@/components/card.component';
 import Button from '@/components/button.component';
-
-import AddIcon from '../assets/add.svg';
-import { createPortal } from 'react-dom';
 import Modal from '@/components/modal.component';
 import Form from '@/components/form.component';
+
+import AddIcon from '../assets/add.svg';
 
 export type Task = {
   id: number;

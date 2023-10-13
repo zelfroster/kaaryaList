@@ -66,3 +66,12 @@ func (task *Task) updateTask(db *sql.DB) error {
 	}
 	return nil
 }
+
+func (task *Task) deleteTask(db *sql.DB) error {
+  queryString := fmt.Sprintf("DELETE FROM tasks WHERE id=%v", task.ID)
+  _, err := db.Exec(queryString)
+  if err != nil {
+    return err
+  }
+  return nil
+}

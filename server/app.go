@@ -117,10 +117,28 @@ func (app *App) updateTask(rw http.ResponseWriter, req *http.Request) {
   sendResponse(rw, http.StatusOK, task)
 }
 
+func (app *App) deleteTask(rw http.ResponseWriter, req *http.Request) {
+  varMap := mux.Vars(req)
+  key, err := strconv.Atoi(varMap["id"])
+  if err != nil {
+    sendError(rw, http.StatusBadRequest, "invalid task id")
+    return
+  }
+
+  task := Task{ID: key}
+
+  err = task.deleteTask(app.DB)
+  if err != nil {
+    sendError(rw, http.StatusInternalServerError, err.Error())
+    return
+  }
+  sendResponse(rw, http.StatusOK, map[string]bool{"retval":true})
+}
+
 func (app *App) handleRoutes() {
   app.Router.HandleFunc("/getTasks", app.getTasks).Methods("GET")
   app.Router.HandleFunc("/getTask/{id}", app.getTask).Methods("GET")
   app.Router.HandleFunc("/createTask", app.createTask).Methods("POST")
   app.Router.HandleFunc("/updateTask/{id}", app.updateTask).Methods("PUT")
-  // app.Router.HandleFunc("/deleteTask/{id}", app.deleteTask).Methods("DELETE")
+  app.Router.HandleFunc("/deleteTask/{id}", app.deleteTask).Methods("DELETE")
 }

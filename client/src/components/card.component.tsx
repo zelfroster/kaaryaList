@@ -10,6 +10,7 @@ import Modal from './modal.component';
 import Circle from '../assets/tick-circle.svg';
 import CircleTick from '../assets/tick-circle-broken.svg';
 import EditIcon from '../assets/pencil.svg';
+import DeleteIcon from '../assets/dustbin.svg';
 
 type CardPropsType = {
   task: Task;
@@ -30,9 +31,21 @@ export default function Card(cardProps: CardPropsType) {
     setIsCreateModalOpen(false);
   }
 
-  function completeTask() {
+  function deleteTask() {
+    fetch(`http://localhost:9000/deleteTask/${task.id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.retval) {
+          const newTasks = tasks.filter((curTask) => curTask.id !== task.id);
+          setTasks(newTasks);
+        }
+      });
+  }
+
+  function updateTask() {
     const taskToComplete = { name: name, isComplete: !isComplete };
-    console.log(taskToComplete, task.id);
     fetch(`http://localhost:9000/updateTask/${task.id}`, {
       method: 'PUT',
       headers: {
@@ -42,19 +55,17 @@ export default function Card(cardProps: CardPropsType) {
     })
       .then((res) => res.json())
       .then((updatedTask) => {
-        console.log(updatedTask);
         setTasks(() =>
           tasks.map((curTask) => {
             return curTask.id === task.id ? updatedTask : curTask;
           }),
         );
-        console.log(task);
       });
   }
 
   return (
     <div className='group relative flex gap-2 rounded-[4px] border border-zinc-700 bg-neutral-900/90 py-4 pl-6 pr-10'>
-      <label htmlFor='isComplete' onClick={completeTask}>
+      <label htmlFor='isComplete' onClick={updateTask}>
         {isComplete ? <CircleTick /> : <Circle />}
       </label>
       <input
@@ -65,12 +76,14 @@ export default function Card(cardProps: CardPropsType) {
         readOnly
       />
       <p className={isComplete ? 'line-through' : ''}>{name}</p>
-      <Button
-        type='round'
-        icon={<EditIcon />}
-        extraClassProps='absolute -right-2 -top-2 hidden group-hover:block'
-        onClickHandler={openModal}
-      />
+      <span className='absolute -right-2 -top-2 hidden rounded-full bg-[#ddd] px-1 group-hover:flex'>
+        <Button type='round' icon={<EditIcon />} onClickHandler={openModal} />
+        <Button
+          type='round'
+          icon={<DeleteIcon />}
+          onClickHandler={deleteTask}
+        />
+      </span>
       {isCreateModalOpen &&
         createPortal(
           <Modal closeModal={closeModal}>
