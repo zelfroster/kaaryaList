@@ -122,4 +122,5 @@ func (app *App) handleRoutes() {
   app.Router.HandleFunc("/getTask/{id}", app.getTask).Methods("GET")
   app.Router.HandleFunc("/createTask", app.createTask).Methods("POST")
   app.Router.HandleFunc("/updateTask/{id}", app.updateTask).Methods("PUT")
+  // app.Router.HandleFunc("/deleteTask/{id}", app.deleteTask).Methods("DELETE")
 }

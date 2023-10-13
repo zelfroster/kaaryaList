@@ -12,7 +12,7 @@ type Task struct {
 }
 
 func getTasks(db *sql.DB) ([]Task, error) {
-	queryString := "SELECT id, name, is_complete FROM tasks"
+	queryString := "SELECT id, name, is_complete FROM tasks ORDER BY id ASC"
 	rows, err := db.Query(queryString)
 	if err != nil {
 		return nil, err
@@ -49,29 +49,16 @@ func (task *Task) getTask(db *sql.DB) error {
 }
 
 func (task *Task) createTask(db *sql.DB) error {
-	queryString := fmt.Sprintf("INSERT INTO tasks (name) VALUES ('%v')", task.Name)
-	res, err := db.Exec(queryString)
+	queryString := fmt.Sprintf("INSERT INTO tasks (name) VALUES ('%v') RETURNING id", task.Name)
+	err := db.QueryRow(queryString).Scan(&task.ID)
 	if err != nil {
 		return err
 	}
-
-	// get the Id of the newly created Task
-	id, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-
-	task.ID = int(id)
 	return nil
 }
 
 func (task *Task) updateTask(db *sql.DB) error {
-	var queryString string
-	if task.Name == "" {
-		queryString = fmt.Sprintf("UPDATE tasks SET name='%v', is_complete=%v WHERE id=%v RETURNING *", task.Name, task.IsComplete, task.ID)
-	} else {
-		queryString = fmt.Sprintf("UPDATE tasks SET name='%v' WHERE id=%v RETURNING *", task.Name, task.ID)
-	}
+  queryString := fmt.Sprintf("UPDATE tasks SET name='%v', is_complete=%v WHERE id=%v RETURNING *", task.Name, task.IsComplete, task.ID)
 	row := db.QueryRow(queryString)
 	err := row.Scan(&task.ID, &task.Name, &task.IsComplete)
 	if err != nil {
