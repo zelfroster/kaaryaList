@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Toaster } from 'react-hot-toast';
 
 import Card from '@/components/card.component';
 import Button from '@/components/button.component';
@@ -74,6 +75,7 @@ export default function Home() {
               />
             ))}
         </div>
+        <Toaster />
       </main>
       <footer className='p-4 text-center'>Made with &lt;3 by zelfroster</footer>
     </>

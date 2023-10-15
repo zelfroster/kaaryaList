@@ -11,6 +11,7 @@ import Circle from '../assets/tick-circle.svg';
 import CircleTick from '../assets/tick-circle-broken.svg';
 import EditIcon from '../assets/pencil.svg';
 import DeleteIcon from '../assets/dustbin.svg';
+import toast from 'react-hot-toast';
 
 type CardPropsType = {
   task: Task;
@@ -40,6 +41,9 @@ export default function Card(cardProps: CardPropsType) {
         if (res.retval) {
           const newTasks = tasks.filter((curTask) => curTask.id !== task.id);
           setTasks(newTasks);
+          toast.success('Task deleted successfully', {
+            position: 'bottom-right',
+          });
         }
       });
   }

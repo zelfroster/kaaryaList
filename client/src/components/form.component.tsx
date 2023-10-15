@@ -1,5 +1,3 @@
-import { Task } from '@/app/page';
-import Button from './button.component';
 import {
   ChangeEvent,
   Dispatch,
@@ -7,6 +5,12 @@ import {
   SetStateAction,
   useState,
 } from 'react';
+
+import toast from 'react-hot-toast';
+
+import { Task } from '@/app/page';
+
+import Button from './button.component';
 
 type FormPropTypes = {
   taskId?: number;
@@ -43,6 +47,9 @@ export default function Form(formProps: FormPropTypes) {
       .then((res) => res.json())
       .then((newTask) => {
         setTasks(() => [...tasks, newTask]);
+        toast.success('Task created successfully', {
+          position: 'bottom-right',
+        });
       });
   }
 
@@ -57,6 +64,9 @@ export default function Form(formProps: FormPropTypes) {
     })
       .then((res) => res.json())
       .then((updatedTask) => {
+        toast.success('Task updated successfully', {
+          position: 'bottom-right',
+        });
         setTasks(() =>
           tasks.map((task) => {
             return taskId === task.id ? updatedTask : task;
