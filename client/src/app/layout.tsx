@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'कार्यList',
+  title: 'kaaryaList',
   description:
-    'A Task manager/ To Do List application to help you be more productive.',
+    'A Task manager application to help you be more productive.',
 };
 
 export default function RootLayout({

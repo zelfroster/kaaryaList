@@ -37,7 +37,7 @@ export default function Form(formProps: FormPropTypes) {
 
   function createTask() {
     const taskToCreate = { name: curTaskName };
-    fetch(`http://localhost:9000/createTask`, {
+    fetch(`http://localhost:9001/createTask`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -55,7 +55,7 @@ export default function Form(formProps: FormPropTypes) {
 
   function updateTask() {
     const taskToUpdate = { name: curTaskName, isComplete: task?.isComplete };
-    fetch(`http://localhost:9000/updateTask/${task?.id}`, {
+    fetch(`http://localhost:9001/updateTask/${task?.id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',

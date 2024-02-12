@@ -33,7 +33,7 @@ export default function Card(cardProps: CardPropsType) {
   }
 
   function deleteTask() {
-    fetch(`http://localhost:9000/deleteTask/${task.id}`, {
+    fetch(`http://localhost:9001/deleteTask/${task.id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -50,7 +50,7 @@ export default function Card(cardProps: CardPropsType) {
 
   function updateTask() {
     const taskToComplete = { name: name, isComplete: !isComplete };
-    fetch(`http://localhost:9000/updateTask/${task.id}`, {
+    fetch(`http://localhost:9001/updateTask/${task.id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
@@ -81,11 +81,11 @@ export default function Card(cardProps: CardPropsType) {
       />
       <p className={isComplete ? 'line-through' : ''}>{name}</p>
       <span className='absolute -right-2 -top-2 hidden rounded-full bg-[#ddd] px-1 group-hover:flex'>
-        <Button type='round' icon={<EditIcon />} onClickHandler={openModal} />
+        <Button shape='round' icon={<EditIcon />} onClick={openModal} />
         <Button
-          type='round'
+          shape='round'
           icon={<DeleteIcon />}
-          onClickHandler={deleteTask}
+          onClick={deleteTask}
         />
       </span>
       {isCreateModalOpen &&

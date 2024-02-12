@@ -10,6 +10,7 @@ import Modal from '@/components/modal.component';
 import Form from '@/components/form.component';
 
 import AddIcon from '../assets/add.svg';
+import { useRouter } from 'next/navigation';
 
 export type Task = {
   id: number;
@@ -23,7 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     async function getAllTasks() {
-      const res = await fetch('http://localhost:9000/getTasks');
+      const res = await fetch('http://localhost:9001/getTasks');
       const json = await res.json();
       setTasks(json);
     }
@@ -38,11 +39,15 @@ export default function Home() {
     setIsEditModalOpen(false);
   }
 
+  console.log(tasks);
+
+  const router = useRouter()
+
   return (
     <>
       <header className='container mx-auto mb-6 flex h-20 justify-between border-b border-b-neutral-900 px-4 pb-16 pt-8'>
-        <p className='text-4xl font-bold text-white'>कार्यList</p>
-        <Button value='Login' />
+        <p className='text-4xl font-bold text-white'>kaaryaList</p>
+        <Button onClick={() => router.push('/auth')} value='Login' />
       </header>
       <main className='container mx-auto mb-auto p-4'>
         <div className='flex justify-between'>
@@ -50,7 +55,7 @@ export default function Home() {
           <Button
             value='Add Task'
             icon={<AddIcon />}
-            onClickHandler={openModal}
+            onClick={openModal}
           />
           {isEditModalOpen &&
             createPortal(
@@ -64,9 +69,9 @@ export default function Home() {
               document.body,
             )}
         </div>
-        <div className='flex flex-wrap gap-4'>
-          {tasks &&
-            tasks.map((task) => (
+        {tasks && tasks.length > 0
+          ? <div className='flex flex-wrap gap-4'>
+            {tasks.map((task) => (
               <Card
                 key={task.id}
                 task={task}
@@ -74,7 +79,11 @@ export default function Home() {
                 setTasks={setTasks}
               />
             ))}
-        </div>
+          </div>
+          : <div className='flex flex-col justify-center items-center p-12 text-neutral-500'>
+            <p>You have no tasks yet. </p>
+            <p>Create a task to show here.</p>
+          </div>}
         <Toaster />
       </main>
       <footer className='p-4 text-center'>Made with &lt;3 by zelfroster</footer>

@@ -13,9 +13,9 @@ export default function Modal({ closeModal, children }: ModalPropTypes) {
         {children}
         <div className='absolute -right-2 -top-2'>
           <Button
-            type='round'
+            shape='round'
             icon={<CrossIcon />}
-            onClickHandler={closeModal}
+            onClick={closeModal}
           />
         </div>
       </div>
