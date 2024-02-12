@@ -11,8 +11,26 @@ type Task struct {
 	IsComplete bool   `json:"isComplete"`
 }
 
+type User struct {
+	Id       string `json:"id"`
+	Name     string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (user *User) registerUser(db *sql.DB) error {
+	queryString := fmt.Sprintf("INSERT INTO users (username, email, password) VALUES ('%s', '%s', '%s') RETURNING *", user.Name, user.Email, user.Password)
+
+	// store data according to the columns in database
+	err := db.QueryRow(queryString).Scan(&user.Name, &user.Password, &user.Id, &user.Email)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func getTasks(db *sql.DB) ([]Task, error) {
-	queryString := "SELECT id, name, is_complete FROM tasks ORDER BY id ASC"
+	queryString := "SELECT id, task_name, is_complete FROM tasks ORDER BY id ASC"
 	rows, err := db.Query(queryString)
 	if err != nil {
 		return nil, err
@@ -58,7 +76,7 @@ func (task *Task) createTask(db *sql.DB) error {
 }
 
 func (task *Task) updateTask(db *sql.DB) error {
-  queryString := fmt.Sprintf("UPDATE tasks SET name='%v', is_complete=%v WHERE id=%v RETURNING *", task.Name, task.IsComplete, task.ID)
+	queryString := fmt.Sprintf("UPDATE tasks SET name='%v', is_complete=%v WHERE id=%v RETURNING *", task.Name, task.IsComplete, task.ID)
 	row := db.QueryRow(queryString)
 	err := row.Scan(&task.ID, &task.Name, &task.IsComplete)
 	if err != nil {
@@ -68,10 +86,10 @@ func (task *Task) updateTask(db *sql.DB) error {
 }
 
 func (task *Task) deleteTask(db *sql.DB) error {
-  queryString := fmt.Sprintf("DELETE FROM tasks WHERE id=%v", task.ID)
-  _, err := db.Exec(queryString)
-  if err != nil {
-    return err
-  }
-  return nil
+	queryString := fmt.Sprintf("DELETE FROM tasks WHERE id=%v", task.ID)
+	_, err := db.Exec(queryString)
+	if err != nil {
+		return err
+	}
+	return nil
 }
