@@ -47,48 +47,35 @@ func (app *App) Run(address string) {
 	log.Fatal(http.ListenAndServe(address, app.Router))
 }
 
-func sendResponse(rw http.ResponseWriter, statusCode int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-	rw.Header().Set("Content-Type", "application/json")
-	// rw.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	rw.WriteHeader(statusCode)
-	rw.Write(response)
-}
-
-func sendError(rw http.ResponseWriter, statusCode int, err string) {
-	errorMessage := map[string]string{"error": err}
-	sendResponse(rw, statusCode, errorMessage)
-}
-
 func (app *App) registerUser(rw http.ResponseWriter, req *http.Request) {
 	var user User
 	err := json.NewDecoder(req.Body).Decode(&user)
 	if err != nil {
-		sendError(rw, http.StatusInternalServerError, err.Error())
+		SendError(rw, http.StatusInternalServerError, err.Error())
 	}
 
 	// create a hash of password
 	password, err := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
 	if err != nil {
-		sendError(rw, http.StatusBadRequest, err.Error())
+		SendError(rw, http.StatusBadRequest, err.Error())
 	}
 
 	user.Password = string(password)
 
 	err = user.registerUser(app.DB)
 	if err != nil {
-		sendError(rw, http.StatusBadRequest, err.Error())
+		SendError(rw, http.StatusBadRequest, err.Error())
 	}
-	sendResponse(rw, http.StatusOK, user)
+	SendResponse(rw, http.StatusOK, user)
 }
 
 func (app *App) getTasks(rw http.ResponseWriter, req *http.Request) {
 	tasks, err := getTasks(app.DB)
 	if err != nil {
-		sendError(rw, http.StatusInternalServerError, err.Error())
+		SendError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
-	sendResponse(rw, http.StatusOK, tasks)
+	SendResponse(rw, http.StatusOK, tasks)
 }
 
 func (app *App) getTask(rw http.ResponseWriter, req *http.Request) {
@@ -96,7 +83,7 @@ func (app *App) getTask(rw http.ResponseWriter, req *http.Request) {
 	varMap := mux.Vars(req)
 	key, err := strconv.Atoi(varMap["id"])
 	if err != nil {
-		sendError(rw, http.StatusBadRequest, "invalid task id")
+		SendError(rw, http.StatusBadRequest, "invalid task id")
 		return
 	}
 
@@ -104,10 +91,10 @@ func (app *App) getTask(rw http.ResponseWriter, req *http.Request) {
 
 	err = task.getTask(app.DB)
 	if err != nil {
-		sendError(rw, http.StatusInternalServerError, err.Error())
+		SendError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
-	sendResponse(rw, http.StatusOK, task)
+	SendResponse(rw, http.StatusOK, task)
 }
 
 func (app *App) createTask(rw http.ResponseWriter, req *http.Request) {
@@ -117,17 +104,17 @@ func (app *App) createTask(rw http.ResponseWriter, req *http.Request) {
 
 	err := task.createTask(app.DB)
 	if err != nil {
-		sendError(rw, http.StatusInternalServerError, err.Error())
+		SendError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
-	sendResponse(rw, http.StatusOK, task)
+	SendResponse(rw, http.StatusOK, task)
 }
 
 func (app *App) updateTask(rw http.ResponseWriter, req *http.Request) {
 	varMap := mux.Vars(req)
 	key, err := strconv.Atoi(varMap["id"])
 	if err != nil {
-		sendError(rw, http.StatusBadRequest, "invalid task id")
+		SendError(rw, http.StatusBadRequest, "invalid task id")
 		return
 	}
 
@@ -137,17 +124,17 @@ func (app *App) updateTask(rw http.ResponseWriter, req *http.Request) {
 
 	err = task.updateTask(app.DB)
 	if err != nil {
-		sendError(rw, http.StatusInternalServerError, err.Error())
+		SendError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
-	sendResponse(rw, http.StatusOK, task)
+	SendResponse(rw, http.StatusOK, task)
 }
 
 func (app *App) deleteTask(rw http.ResponseWriter, req *http.Request) {
 	varMap := mux.Vars(req)
 	key, err := strconv.Atoi(varMap["id"])
 	if err != nil {
-		sendError(rw, http.StatusBadRequest, "invalid task id")
+		SendError(rw, http.StatusBadRequest, "invalid task id")
 		return
 	}
 
@@ -155,10 +142,10 @@ func (app *App) deleteTask(rw http.ResponseWriter, req *http.Request) {
 
 	err = task.deleteTask(app.DB)
 	if err != nil {
-		sendError(rw, http.StatusInternalServerError, err.Error())
+		SendError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
-	sendResponse(rw, http.StatusOK, map[string]bool{"retval": true})
+	SendResponse(rw, http.StatusOK, map[string]bool{"retval": true})
 }
 
 func (app *App) handleRoutes() {
