@@ -8,14 +8,20 @@ type ModalPropTypes = {
 
 export default function Modal({ closeModal, children }: ModalPropTypes) {
   return (
-    <div className='absolute min-h-screen w-full bg-black/40 backdrop-blur-[2px]'>
-      <div className='absolute inset-0 m-auto flex h-fit w-max flex-col'>
+    // Outer div for overlay
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4'> {/* Changed to fixed, added z-index, centering, padding for small screens */}
+      {/* Modal content container - relative for positioning close button */}
+      <div className='relative bg-black rounded-md shadow-xl w-full max-w-lg'> {/* Added bg, rounded, shadow, width constraints */}
+        {/* The children (e.g. Form component) will provide its own padding and border */}
         {children}
-        <div className='absolute -right-2 -top-2'>
+        {/* Close button positioned relative to this container */}
+        {/* The Form has p-6, so top-4 right-4 relative to the Form's boundary (created by this div) is good */}
+        <div className='absolute top-4 right-4'> 
           <Button
-            shape='round'
+            variant='icon' // Use new variant
             icon={<CrossIcon />}
             onClick={closeModal}
+            extraClassProps="rounded-full" // Keep it round
           />
         </div>
       </div>

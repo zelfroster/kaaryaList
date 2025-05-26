@@ -78,21 +78,24 @@ export default function Form(formProps: FormPropTypes) {
   return (
     <form
       onSubmit={handleSubmit}
-      className='flex flex-col gap-4 rounded-md border border-white/90 bg-black p-6'
+      className='flex flex-col gap-4 rounded-md border border-zinc-700 bg-black p-6' // Updated border
     >
-      <label htmlFor='taskName' className='text-xl font-bold'>
-        Enter Task Name
+      <label htmlFor='taskName' className='text-base font-medium text-zinc-300 mb-1'> {/* Updated label */}
+        Task Name
       </label>
       <input
         type='text'
         id='taskName'
         value={curTaskName}
-        className='rounded border border-white/60 bg-black/20 px-2 py-1 outline-none focus:border-white'
+        className='w-full bg-zinc-800 border border-zinc-700 text-zinc-100 px-3 py-2 rounded focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none' // Updated input
         onChange={handleChange}
+        placeholder='Enter task name...' // Added placeholder
       />
       <Button
+        type='submit' // Explicitly set type
+        variant='primary' // Use new variant
         value={taskId ? 'Confirm Edit' : 'Create Task'}
-        extraClassProps='justify-center'
+        extraClassProps='justify-center w-full mt-2' // Added w-full and margin
       />
     </form>
   );

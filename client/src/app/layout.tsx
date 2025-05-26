@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang='en' className='scroll-smooth'>
       <head>
-        <Script
+        {/* <Script
           src='https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js'
           strategy='beforeInteractive'
           defer
@@ -30,11 +30,11 @@ export default function RootLayout({
           }}
           strategy='afterInteractive'
           defer
-        />
+        /> */}
       </head>
       <body className='relative flex min-h-screen w-full flex-col bg-black text-zinc-300'>
         {children}
-        <div id='particles-js' className='fixed inset-0 -z-10'></div>
+        {/* <div id='particles-js' className='fixed inset-0 -z-10'></div> */}
       </body>
     </html>
   );
