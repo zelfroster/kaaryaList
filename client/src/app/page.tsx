@@ -45,14 +45,15 @@ export default function Home() {
 
   return (
     <>
-      <header className='container mx-auto mb-6 flex h-20 justify-between border-b border-b-neutral-900 px-4 pb-16 pt-8'>
-        <p className='text-4xl font-bold text-white'>kaaryaList</p>
-        <Button onClick={() => router.push('/auth')} value='Login' />
+      <header className='container mx-auto mb-6 flex h-20 items-center justify-between border-b border-b-zinc-800 px-4 pb-16 pt-8'> {/* Updated border, added items-center */}
+        <p className='text-4xl font-bold text-zinc-100'>kaaryaList</p> {/* Updated text color */}
+        <Button variant='secondary' onClick={() => router.push('/auth')} value='Login' /> {/* Updated Button */}
       </header>
       <main className='container mx-auto mb-auto p-4'>
-        <div className='flex justify-between'>
-          <h2 className='mb-4 text-2xl font-bold'>Tasks</h2>
+        <div className='flex items-center justify-between'> {/* Added items-center */}
+          <h2 className='mb-4 text-2xl font-bold text-zinc-100'>Tasks</h2> {/* Updated text color */}
           <Button
+            variant='primary' /* Updated Button */
             value='Add Task'
             icon={<AddIcon />}
             onClick={openModal}
@@ -70,7 +71,7 @@ export default function Home() {
             )}
         </div>
         {tasks && tasks.length > 0
-          ? <div className='flex flex-wrap gap-4'>
+          ? <div className='mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'> {/* Updated layout for tasks, added mt-6 */}
             {tasks.map((task) => (
               <Card
                 key={task.id}
@@ -80,9 +81,10 @@ export default function Home() {
               />
             ))}
           </div>
-          : <div className='flex flex-col justify-center items-center p-12 text-neutral-500'>
-            <p>You have no tasks yet. </p>
-            <p>Create a task to show here.</p>
+          : <div className='flex flex-col justify-center items-center p-12 text-zinc-500 mt-10 text-center'> {/* Updated text color and added mt-10, text-center */}
+            {/* Optional: Add an SVG icon here later if desired */}
+            <p className="text-lg">You have no tasks yet.</p>
+            <p className="text-sm">Create a task to show here.</p>
           </div>}
         <Toaster />
       </main>

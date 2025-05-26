@@ -19,10 +19,10 @@ type User struct {
 }
 
 func (user *User) registerUser(db *sql.DB) error {
-	queryString := fmt.Sprintf("INSERT INTO users (username, email, password) VALUES ('%s', '%s', '%s') RETURNING *", user.Name, user.Email, user.Password)
+	queryString := "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING username, password, id, email"
 
 	// store data according to the columns in database
-	err := db.QueryRow(queryString).Scan(&user.Name, &user.Password, &user.Id, &user.Email)
+	err := db.QueryRow(queryString, user.Name, user.Email, user.Password).Scan(&user.Name, &user.Password, &user.Id, &user.Email)
 	if err != nil {
 		return err
 	}
@@ -55,8 +55,8 @@ func getTasks(db *sql.DB) ([]Task, error) {
 }
 
 func (task *Task) getTask(db *sql.DB) error {
-	queryString := fmt.Sprintf("SELECT name, is_complete FROM tasks WHERE id=%v", task.ID)
-	row := db.QueryRow(queryString)
+	queryString := "SELECT task_name, is_complete FROM tasks WHERE id=$1"
+	row := db.QueryRow(queryString, task.ID)
 
 	err := row.Scan(&task.Name, &task.IsComplete)
 	if err != nil {
@@ -67,8 +67,8 @@ func (task *Task) getTask(db *sql.DB) error {
 }
 
 func (task *Task) createTask(db *sql.DB) error {
-	queryString := fmt.Sprintf("INSERT INTO tasks (name) VALUES ('%v') RETURNING id", task.Name)
-	err := db.QueryRow(queryString).Scan(&task.ID)
+	queryString := "INSERT INTO tasks (task_name) VALUES ($1) RETURNING id"
+	err := db.QueryRow(queryString, task.Name).Scan(&task.ID)
 	if err != nil {
 		return err
 	}
@@ -76,8 +76,8 @@ func (task *Task) createTask(db *sql.DB) error {
 }
 
 func (task *Task) updateTask(db *sql.DB) error {
-	queryString := fmt.Sprintf("UPDATE tasks SET name='%v', is_complete=%v WHERE id=%v RETURNING *", task.Name, task.IsComplete, task.ID)
-	row := db.QueryRow(queryString)
+	queryString := "UPDATE tasks SET task_name=$1, is_complete=$2 WHERE id=$3 RETURNING id, task_name, is_complete"
+	row := db.QueryRow(queryString, task.Name, task.IsComplete, task.ID)
 	err := row.Scan(&task.ID, &task.Name, &task.IsComplete)
 	if err != nil {
 		return err
@@ -86,8 +86,8 @@ func (task *Task) updateTask(db *sql.DB) error {
 }
 
 func (task *Task) deleteTask(db *sql.DB) error {
-	queryString := fmt.Sprintf("DELETE FROM tasks WHERE id=%v", task.ID)
-	_, err := db.Exec(queryString)
+	queryString := "DELETE FROM tasks WHERE id=$1"
+	_, err := db.Exec(queryString, task.ID)
 	if err != nil {
 		return err
 	}
